@@ -6,6 +6,8 @@ import Navbar from "../components/navBar";
 import AddToFavoritesButton from "../components/addFavori";
 import Autosuggest from "react-autosuggest";
 import { FaSearch } from "react-icons/fa";
+import { giphyApi, useSearchGifsQuery } from "../services/api/gif/gitApi";
+import GifImage from "../components/gifImage";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -162,10 +164,8 @@ const HomePage = () => {
         <MusicList>
           {searchResults?.map((music) => (
             <MusicCard key={music.id}>
-              <MusicImage
-                src="https://cdn-rfm.lanmedia.fr/var/rfm/storage/images/news/queen-bientot-des-timbres-a-l-effigie-du-groupe-19825/284659-1-fre-FR/Queen-Bientot-des-timbres-a-l-effigie-du-groupe.jpg"
-                alt={music.title}
-              />
+              <GifImage searchQuery={music.title}/>
+              
               <MusicTitle>{music.title}</MusicTitle>
               <MusicArtist>{music.artist}</MusicArtist>
               <AddToFavoritesButton
