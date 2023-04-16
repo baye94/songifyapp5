@@ -5,6 +5,7 @@ import styled from "styled-components";
 
 const Navbar = () => {
   return (
+    <NavContainer>
     <Nav>
       <Logo to="/">SON GIF YAPP 5</Logo>
       <Links>
@@ -16,8 +17,12 @@ const Navbar = () => {
         </LinkItem>
       </Links>
     </Nav>
+    </NavContainer>
   );
 };
+const NavContainer = styled.div`
+  overflow-x: hidden;
+`;
 const Nav = styled.nav`
   display: flex;
   justify-content: space-between;

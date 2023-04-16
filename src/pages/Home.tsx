@@ -1,69 +1,186 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from "react-redux";
 import { Music, useFetchMusicsQuery } from "../services/api/music/musicApi";
 import Navbar from "../components/navBar";
 import AddToFavoritesButton from "../components/addFavori";
+import Autosuggest from "react-autosuggest";
+import { FaSearch } from "react-icons/fa";
 
 const HomePage = () => {
   const dispatch = useDispatch();
-  const { data, isLoading, isError, error } = useFetchMusicsQuery();
-  const [favorites, setFavorites] = useState(() => {
-    const localStorageValue = window.localStorage.getItem("favorites")
-    console.log('init' , localStorageValue)
 
-    if (localStorageValue && localStorageValue !== 'undefined') {
-      return JSON.parse(localStorageValue)
+  // Utilisation du hook useFetchMusicsQuery pour récupérer les données de musiques
+  // isLoading : indique si les données sont en cours de chargement
+  // isError : indique si une erreur s'est produite lors du chargement des données
+  // error : l'erreur éventuelle retournée par le serveur
+  const { data, isLoading, isError, error } = useFetchMusicsQuery();
+
+  // Utilisation du localStorage pour stocker les musiques favorites
+  const [favorites, setFavorites] = useState(() => {
+    try {
+      const localStorageValue = window.localStorage.getItem("favorites");
+
+      console.log("init", localStorageValue);
+
+      if (localStorageValue && localStorageValue !== "undefined") {
+        return JSON.parse(localStorageValue);
+      }
+      return [];
+    } catch (error) {
+      console.error("Erreur lors du chargement des données favorites", error);
+      return [];
     }
-    return []
   });
+
+  // Initialisation des champs de recherche et de suggestion
+  const [value, setValue] = useState("");
+  const [suggestions, setSuggestions] = useState<Music[]>([]);
+  const [searchResults, setSearchResults] = useState<Music[]>([]);
+
+  // Fonction qui retourne une liste de suggestions de musiques en fonction d'une chaîne de recherche
+  const getSuggestions = (value: string): Music[] => {
+    const inputValue = value.trim().toLowerCase();
+    const inputLength = inputValue.length;
+
+    return inputLength === 0
+      ? []
+      : data?.filter(
+          (music: Music) =>
+            music.title.toLowerCase().slice(0, inputLength) === inputValue
+        ) ?? [];
+  };
+
+  // Fonction appelée lorsqu'une suggestion est sélectionnée dans le champ de recherche
+  const handleChange = (
+    event: React.FormEvent<HTMLElement>,
+    { newValue }: Autosuggest.ChangeEvent
+  ) => {
+    setValue(newValue);
+    searchMusicByTitle(newValue);
+  };
+
+  // Fonction appelée lorsqu'un utilisateur tape dans le champ de recherche
+  const onSuggestionsFetchRequested = ({
+    value,
+  }: Autosuggest.SuggestionsFetchRequestedParams) => {
+    const newSuggestions = getSuggestions(value);
+    setSuggestions(newSuggestions);
+  };
+
+  // Fonction appelée lorsqu'un utilisateur supprime la recherche actuelle
+  const onSuggestionsClearRequested = () => {
+    setSuggestions([]);
+  };
+
+  // Utilisation du hook useEffect pour sauvegarder les musiques favorites dans le localStorage
   useEffect(() => {
-    localStorage.setItem("favorites", JSON.stringify(favorites));
+    try {
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+    } catch (error) {
+      console.error(
+        "Erreur lors de la sauvegarde des données favorites",
+        error
+      );
+    }
   }, [favorites]);
-  
+
+  // Fonction qui ajoute une musique aux favoris
   function addToFavorites(item: Music) {
-    if (!favorites.some((favorite: { id: string; }) => favorite.id === item.id)) {
+    if (
+      !favorites.some((favorite: { id: string }) => favorite.id === item.id)
+    ) {
       setFavorites([...favorites, item]);
     }
   }
-  
-  function removeFromFavorites(item: Music) {
-    setFavorites(favorites.filter((favorite: { id: string; }) => favorite.id !== item.id));
-  }
-  
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
-  if (isError) {
-    const myJSON = JSON.stringify(data);
-    return <div>{myJSON}</div>;
-  }
-  
-  
+  // Fonction qui effectue une recherche de musiques en fonction d'une chaîne de recherche
+  const searchMusicByTitle = (value: string) => {
+    try {
+      if (data) {
+        const results = data.filter((music: Music) =>
+          music.title.toLowerCase().includes(value.toLowerCase())
+        );
+        setSearchResults(results);
+      } else {
+        setSearchResults([]);
+      }
+    } catch (error) {
+      console.error("Erreur lors de la recherche de musiques", error);
+      setSearchResults([]);
+    }
+  };
 
+  // Utilisation du hook useEffect pour initialiser les résultats de recherche avec les données récupérées
+  useEffect(() => {
+    try {
+      if (data) {
+        setSearchResults(data);
+      } else {
+        setSearchResults([]);
+      }
+    } catch (error) {
+      console.error(
+        "Erreur lors de l'initialisation des résultats de recherche",
+        error
+      );
+      setSearchResults([]);
+    }
+  }, [data]);
 
   return (
     <>
       <Navbar></Navbar>
       <Container>
         <Heading>Ma liste de musique</Heading>
+        <Autosuggest
+          suggestions={suggestions}
+          onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+          onSuggestionsClearRequested={onSuggestionsClearRequested}
+          getSuggestionValue={(music: Music) => music.title}
+          renderSuggestion={(music: Music) => (
+            <SuggestionItem>{music.title}</SuggestionItem>
+          )}
+          inputProps={{
+            placeholder: "Recherche",
+            value: value,
+            onChange: handleChange,
+          }}
+          renderInputComponent={(inputProps) => (
+            <SearchContainer>
+              <SearchInput {...inputProps} />
+              <SearchIcon />
+            </SearchContainer>
+          )}
+          renderSuggestionsContainer={({ containerProps, children, query }) => (
+            <SuggestionsContainer {...containerProps}>
+              {children}
+            </SuggestionsContainer>
+          )}
+        />
+        <br></br>
         <MusicList>
-          {data?.map((music) => (
+          {searchResults?.map((music) => (
             <MusicCard key={music.id}>
-              <MusicImage src="https://via.placeholder.com/300x300"  alt={music.title}  />
+              <MusicImage
+                src="https://cdn-rfm.lanmedia.fr/var/rfm/storage/images/news/queen-bientot-des-timbres-a-l-effigie-du-groupe-19825/284659-1-fre-FR/Queen-Bientot-des-timbres-a-l-effigie-du-groupe.jpg"
+                alt={music.title}
+              />
               <MusicTitle>{music.title}</MusicTitle>
               <MusicArtist>{music.artist}</MusicArtist>
-              <AddToFavoritesButton isFavorite={favorites.some((favorite: { id: string; }) => favorite.id === music.id)} onClick={() => addToFavorites(music)} />
+              <AddToFavoritesButton
+                isFavorite={favorites.some(
+                  (favorite: { id: string }) => favorite.id === music.id
+                )}
+                onClick={() => addToFavorites(music)}
+              />
             </MusicCard>
           ))}
         </MusicList>
-        
       </Container>
     </>
   );
 };
-
 
 export default HomePage;
 
@@ -134,7 +251,7 @@ const MusicArtist = styled.p`
 const Button = styled.button`
   margin-top: 2rem;
   padding: 1rem;
-  background-color: #008CBA;
+  background-color: #008cba;
   border: none;
   border-radius: 5px;
   color: white;
@@ -147,3 +264,48 @@ const Button = styled.button`
   }
 `;
 
+const SearchContainer = styled.div`
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 5px;
+  background-color: #fff;
+  width: 300px;
+  height: 40px;
+  &:focus-within {
+    box-shadow: 0 0 0 2px #00bcd4;
+  }
+`;
+
+const SearchInput = styled.input`
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+`;
+
+const SearchIcon = styled(FaSearch)`
+  color: #999;
+  font-size: 20px;
+  margin-right: 10px;
+`;
+
+const SuggestionsContainer = styled.div`
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+`;
+
+const SuggestionItem = styled.div`
+  padding: 8px;
+  cursor: pointer;
+  background-color: transparent;
+  &:hover {
+    background-color: #f1f1f1;
+  }
+`;
