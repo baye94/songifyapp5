@@ -4,24 +4,24 @@ import Navbar from "../components/navBar";
 
 
 const FavoriPage = () => {
-  const musicList = [
-    { id: 1, title: "Bohemian Rhapsody", artist: "Queen" },
-    { id: 2, title: "Stairway to Heaven", artist: "Led Zeppelin" },
-    { id: 3, title: "Hotel California", artist: "Eagles" },
-    { id: 4, title: "Imagine", artist: "John Lennon" },
-  ];
+  const storageData = localStorage.getItem("favorites");
+  const musicList = storageData ? JSON.parse(storageData) : [];
 
   return (
     <><Navbar /><Container>
-      <Heading>Ma liste de musique</Heading>
-      <MusicList>
-        {musicList.map((music) => (
-          <MusicListItem key={music.id}>
-            <MusicTitle>{music.title}</MusicTitle>
-            <MusicArtist>{music.artist}</MusicArtist>
-          </MusicListItem>
-        ))}
-      </MusicList>
+      <Heading> musique favori</Heading>
+      {musicList.length > 0 ? (
+          <MusicList>
+            {musicList.map((music:any) => (
+              <MusicListItem key={music.id}>
+                <MusicTitle>{music.title}</MusicTitle>
+                <MusicArtist>{music.artist}</MusicArtist>
+              </MusicListItem>
+            ))}
+          </MusicList>
+        ) : (
+          <p>Aucune musique dans la liste.</p>
+        )}
     </Container></>
   );
 };

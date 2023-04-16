@@ -7,12 +7,13 @@ interface Recording  {
     format: string;
   };
   
-  interface Music {
+   export interface Music {
     id: string;
     title: string;
     artist: string;
     description: string;
   }
+  
   
   export const musicApi = createApi({
     reducerPath: "music",

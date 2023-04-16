@@ -1,13 +1,35 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from 'react';
 import styled from "styled-components";
 import { useDispatch, useSelector } from 'react-redux';
-import { useFetchMusicsQuery } from "../services/api/music/musicApi";
+import { Music, useFetchMusicsQuery } from "../services/api/music/musicApi";
 import Navbar from "../components/navBar";
 import AddToFavoritesButton from "../components/addFavori";
 
 const HomePage = () => {
   const dispatch = useDispatch();
   const { data, isLoading, isError, error } = useFetchMusicsQuery();
+  const [favorites, setFavorites] = useState(() => {
+    const localStorageValue = window.localStorage.getItem("favorites")
+    console.log('init' , localStorageValue)
+
+    if (localStorageValue && localStorageValue !== 'undefined') {
+      return JSON.parse(localStorageValue)
+    }
+    return []
+  });
+  useEffect(() => {
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  }, [favorites]);
+  
+  function addToFavorites(item: Music) {
+    if (!favorites.some((favorite: { id: string; }) => favorite.id === item.id)) {
+      setFavorites([...favorites, item]);
+    }
+  }
+  
+  function removeFromFavorites(item: Music) {
+    setFavorites(favorites.filter((favorite: { id: string; }) => favorite.id !== item.id));
+  }
   
   if (isLoading) {
     return <div>Loading...</div>;
@@ -17,6 +39,9 @@ const HomePage = () => {
     const myJSON = JSON.stringify(data);
     return <div>{myJSON}</div>;
   }
+  
+  
+
 
   return (
     <>
@@ -29,9 +54,7 @@ const HomePage = () => {
               <MusicImage src="https://via.placeholder.com/300x300"  alt={music.title}  />
               <MusicTitle>{music.title}</MusicTitle>
               <MusicArtist>{music.artist}</MusicArtist>
-              <AddToFavoritesButton isFavorite={false} onClick={function (): void {
-                throw new Error("Function not implemented.");
-              } }></AddToFavoritesButton>
+              <AddToFavoritesButton isFavorite={favorites.some((favorite: { id: string; }) => favorite.id === music.id)} onClick={() => addToFavorites(music)} />
             </MusicCard>
           ))}
         </MusicList>
@@ -40,6 +63,7 @@ const HomePage = () => {
     </>
   );
 };
+
 
 export default HomePage;
 

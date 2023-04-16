@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import styled from "styled-components";
+import { useState } from "react";
+import styled from 'styled-components';
+
 
 type AddToFavoritesButtonProps = {
   isFavorite: boolean;
@@ -8,6 +9,9 @@ type AddToFavoritesButtonProps = {
 
 const AddToFavoritesButton = ({ isFavorite, onClick }: AddToFavoritesButtonProps) => {
   const [hovered, setHovered] = useState(false);
+  const [isInLocalStorage, setIsInLocalStorage] = useState(
+    () => window.localStorage.getItem('favorites')?.includes('YourMusicID') || false
+  );
 
   const handleMouseEnter = () => {
     setHovered(true);
@@ -17,21 +21,27 @@ const AddToFavoritesButton = ({ isFavorite, onClick }: AddToFavoritesButtonProps
     setHovered(false);
   };
 
+  const handleClick = () => {
+    onClick();
+    setIsInLocalStorage(!isInLocalStorage);
+  };
+
   return (
     <Button
-      onClick={onClick}
+      onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      isFavorite={isFavorite}
+      isFavorite={isInLocalStorage}
       hovered={hovered}
     >
-      {isFavorite ? "Remove from favorites" : "Add to favorites"}
+      Retirer des favoris" ou "Ajouter aux favoris".
+      {isInLocalStorage ? "Retirer des favori" : "Ajouter des favori"}
     </Button>
   );
 };
 
 const Button = styled.button<{ isFavorite: boolean; hovered: boolean }>`
-  background-color: ${(props) =>
+  background-color: ${(props: { isFavorite: any; hovered: any; }) =>
     props.isFavorite ? "#e74c3c" : props.hovered ? "#2ecc71" : "#3498db"};
   color: #fff;
   font-size: 1rem;
