@@ -1,46 +1,54 @@
-# Getting Started with Create React App
+# Démarrer avec Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Ce projet a été initialisé avec [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Scripts disponibles
 
-In the project directory, you can run:
+Dans le répertoire du projet, vous pouvez exécuter :
 
-### `yarn start`
+### `npm install`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Cette commande permet d'installer les modules Node.js nécessaires au fonctionnement de l'application.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### `npm start`
 
-### `yarn test`
+Cette commande lance l'application en mode développement.\
+Ouvrez [http://localhost:3000](http://localhost:3000) pour la voir dans votre navigateur.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+La page se rechargera automatiquement si vous apportez des modifications au code.\
+Vous verrez également toutes les erreurs de lint dans la console.
 
-### `yarn build`
+### `npm test`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Cette commande lance le runner de tests en mode interactif.\
+Consultez la section sur [l'exécution de tests](https://facebook.github.io/create-react-app/docs/running-tests) pour plus d'informations.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### `npm run build`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Cette commande compile l'application pour la production dans le dossier `build`.\
+Elle bundle React en mode production et optimise la construction pour de meilleures performances.
 
-### `yarn eject`
+Le build est minifié et les noms de fichiers incluent les hachages.\
+Votre application est prête à être déployée !
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Consultez la section sur [le déploiement](https://facebook.github.io/create-react-app/docs/deployment) pour plus d'informations.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### `npm run eject`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+**Note : ceci est une opération à sens unique. Une fois que vous avez `ejecté`, vous ne pouvez pas revenir en arrière !**
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Si vous n'êtes pas satisfait de l'outil de construction et des choix de configuration, vous pouvez `ejecter` à tout moment.\
+Cette commande supprimera la dépendance de construction unique de votre projet.
 
-## Learn More
+Au lieu de cela, elle copiera tous les fichiers de configuration et les dépendances transitives (webpack, Babel, ESLint, etc.) directement dans votre projet afin que vous en ayez un contrôle total.\
+Toutes les commandes sauf `eject` fonctionneront toujours, mais elles pointeront vers les scripts copiés pour que vous puissiez les ajuster.\
+À ce stade, vous êtes seul.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Vous n'êtes pas obligé d'utiliser `eject`. L'ensemble de fonctionnalités proposé convient aux déploiements de petite et moyenne envergure, et vous ne devriez pas vous sentir obligé d'utiliser cette fonctionnalité.\
+Cependant, nous comprenons que cet outil ne serait pas utile si vous ne pouviez pas le personnaliser lorsque vous en aurez besoin.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## En savoir plus
+
+Vous pouvez en apprendre plus dans la [documentation de Create React App](https://facebook.github.io/create-react-app/docs/getting-started).
+
+Pour en savoir plus sur React, consultez la [documentation de React](https://reactjs.org/).
